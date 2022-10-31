@@ -1,8 +1,11 @@
 const { faker } = require('@faker-js/faker'); 
 const mysql = require('mysql');
 const express = require('express');
+const bodyParser = require("body-parser");
 const app = express();
-app.set("view engine", "ejs")
+app.set("view engine", "ejs");
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(express.static(__dirname + "/public"))
 const port1 = 3000;
 
 const connection = mysql.createConnection({
@@ -31,6 +34,15 @@ app.get("/random_number",(req, res) => {
     res.send(`Your lucky number is ${random}`)
 })
 
+app.post("/register", (req, res) => {
+    let person = {
+        email: req.body.email
+    };
+    connection.query('INSERT INTO users SET ?', person, (err, result) => {
+        if (err) throw err;
+        res.redirect("/")
+    });
+});
 
 
 
